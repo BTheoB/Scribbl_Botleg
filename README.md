@@ -74,6 +74,3 @@ npm run dev
 
 Projet réalisé à deux dans le cadre du Master 2 — Web Temps Réel.
 
----
-
-*N'hésitez pas à me contacter si vous souhaitez échanger sur les choix techniques du projet.*
