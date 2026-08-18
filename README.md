@@ -1,4 +1,4 @@
-# 🎨 Scribbl Bootleg — Jeu de dessin collaboratif en temps réel
+# Scribbl Bootleg — Jeu de dessin collaboratif en temps réel
 
 > Projet réalisé dans le cadre du Master 2 — matière **Web Temps Réel** (TIW8)
 > Travail d'équipe (2 personnes) sur plusieurs semaines
@@ -7,11 +7,11 @@ Une réinterprétation du célèbre jeu **skribbl.io**, développée en **TypeSc
 
 ---
 
-## 🕹️ Le concept
+## Le concept
 
 Comme dans skribbl.io : un joueur dessine, les autres devinent. Mais ici, la dimension "temps réel" va plus loin que le chat et le canvas partagé — la webcam de chaque joueur est diffusée en direct aux autres, et le dessinateur peut choisir de dessiner **avec son doigt**, formant un signe particulier, suivi en temps réel par un modèle de détection de mains.
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 - **Système de rooms** — création et connexion à une partie via un ID de room, sans base de données ni backend applicatif lourd (peer-to-peer)
 - **Canvas collaboratif en temps réel** — le dessin du joueur actif se synchronise instantanément chez tous les participants
@@ -21,7 +21,7 @@ Comme dans skribbl.io : un joueur dessine, les autres devinent. Mais ici, la dim
 - **Dessin par gestes (main réelle)** — la caméra capture le mouvement de la main du dessinateur ; un modèle de détection identifie le pincement pouce/index pour tracer sur le canvas, sans souris
 - **Synchronisation d'état distribuée** — l'état du jeu (joueurs, scores, canvas, tours) est répliqué entre tous les clients via une structure de données conçue pour la résolution de conflits en environnement distribué
 
-## 🛠️ Stack technique
+## Stack technique
 
 | Domaine | Technologie |
 |---|---|
@@ -32,7 +32,7 @@ Comme dans skribbl.io : un joueur dessine, les autres devinent. Mais ici, la dim
 | Frontend | React |
 | Serveur de signaling | Node.js / Express + PeerServer |
 
-## 🧠 Architecture temps réel
+## Architecture temps réel
 
 Le jeu repose sur une architecture **peer-to-peer** plutôt que sur un serveur de jeu centralisé classique :
 
@@ -40,18 +40,18 @@ Le jeu repose sur une architecture **peer-to-peer** plutôt que sur un serveur d
 - **Automerge** (CRDT) maintient un document d'état de jeu partagé (joueurs, canvas, scores, tours) qui se synchronise entre tous les clients par échange de deltas, avec résolution automatique des conflits — un des cœurs techniques du projet, essentiel pour garantir la cohérence de l'état du jeu sans serveur autoritaire central.
 - **MediaPipe Hands** traite en continu le flux vidéo local pour détecter les points de repère de la main, calcule la distance entre le pouce et l'index pour détecter un "pincement", et transforme ce geste en coordonnées de dessin sur le canvas.
 
-## 🎯 Objectif pédagogique
+## Objectif pédagogique
 
 - Mise en œuvre concrète de WebRTC et de la synchronisation de données distribuées sans backend centralisé
 - Gestion des états partagés et de la cohérence en environnement multi-clients (CRDT)
 - Intégration d'un modèle de vision par ordinateur en temps réel dans une interface web interactive
 - Travail en équipe restreinte sur un projet complexe multi-composants (réseau, UI, IA, jeu)
 
-## 📸 Démo
+## Démo
 
 *(à compléter — GIF ou capture d'écran du jeu en action, idéalement avec la détection de main visible)*
 
-## 🚀 Installation
+## Installation
 
 ```bash
 # Cloner le dépôt
@@ -70,7 +70,7 @@ npm start
 npm run dev
 ```
 
-## 👥 Équipe
+## Équipe
 
 Projet réalisé à deux dans le cadre du Master 2 — Web Temps Réel.
 
