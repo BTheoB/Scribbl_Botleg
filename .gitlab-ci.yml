@@ -1,0 +1,77 @@
+stages:
+  - install
+  - build
+  - deploy
+
+
+variables:
+  # Cache node_modules between jobs
+  CACHE_FALLBACK_KEY: "default-node-modules"
+
+# Define a cache template for node_modules
+.node_cache:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - client/node_modules/
+    fallback_keys:
+      - $CACHE_FALLBACK_KEY
+
+install_dependencies:
+  stage: install
+  image: node:22
+  extends: .node_cache
+  script:
+        - cd client
+        - yarn
+        - cd ..
+        - cd server
+        - yarn
+  # Only save cache on default branch
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - client/node_modules/
+      - server/node_modules/
+    policy: pull-push
+    when: on_success
+
+build_app:
+  stage: build
+  image: node:22
+  extends: .node_cache
+  script:
+    - cd client
+    - yarn add --dev typescript
+    - yarn build
+    - cd ..
+    - cd server
+    - yarn add --dev typescript
+    - yarn build
+  artifacts:
+    paths:
+      - client/dist/
+      - server/dist/
+    expire_in: 1 week
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - client/node_modules/
+      - server/node_modules/
+    policy: pull
+
+deploy_production:
+  stage: deploy
+  image: node:22
+  before_script:
+  - chmod 400 $SSH_PRIVATE_KEY
+  script:
+        - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY gitlab-ci@192.168.74.149 'cd /var/www/projet; rm -rf client/*; mkdir client/dist; rm -rf server/*; mkdir server/dist; exit'
+        - scp -r -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY client/dist/* gitlab-ci@192.168.74.149:/var/www/projet/client/dist
+        - scp -r -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY server/dist/* gitlab-ci@192.168.74.149:/var/www/projet/server/dist
+        - scp -r -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY server/package.json gitlab-ci@192.168.74.149:/var/www/projet/server/
+        - scp -r -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY server/yarn.lock gitlab-ci@192.168.74.149:/var/www/projet/server/
+        - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY gitlab-ci@192.168.74.149 'source ~/.bashrc && source ~/.profile && cd /var/www/projet/server && yarn && pm2 restart 6 && exit'
+  only:
+    - master
+
